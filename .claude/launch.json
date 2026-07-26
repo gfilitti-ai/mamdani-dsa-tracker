@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mdt-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8099", "--directory", "/Users/filitti/Downloads/mamdani-dsa-tracker/public"],
+      "port": 8099
+    }
+  ]
+}

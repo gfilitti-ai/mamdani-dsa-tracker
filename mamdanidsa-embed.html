@@ -1,0 +1,30 @@
+<!--
+  Paste this into a CODE BLOCK on your site where you want The Mamdani File to
+  appear. It pulls the latest edition into your page on every visit (and
+  refreshes every 10 minutes), so it always looks native to your site — no
+  iframe, no redirect.
+
+  Pre-filled for GitHub user "gfilitti-ai" and repo "mamdani-dsa-tracker". If
+  you name the repo something else, change the URL on the next line to match.
+
+  Works on Squarespace (Business plan+ code block), WordPress (Custom HTML
+  block), Wix (Embed > Custom Code), or any site builder that allows a raw
+  HTML/JS block.
+-->
+<div id="mdt-wire" style="text-align:center;font-family:Arial,Helvetica,sans-serif;color:#888;">Loading the latest edition&hellip;</div>
+<script>
+(function () {
+  var URL = "https://gfilitti-ai.github.io/mamdani-dsa-tracker/embed_sections.html"; // <-- repo name here
+  function load() {
+    fetch(URL + "?t=" + Date.now())
+      .then(function (r) { return r.text(); })
+      .then(function (html) { document.getElementById("mdt-wire").innerHTML = html; })
+      .catch(function () {
+        document.getElementById("mdt-wire").innerHTML =
+          "The Mamdani File is updating — please check back in a moment.";
+      });
+  }
+  load();
+  setInterval(load, 600000); // re-pull every 10 minutes
+})();
+</script>

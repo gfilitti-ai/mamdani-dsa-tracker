@@ -1,0 +1,25 @@
+<!--
+  Paste this into a CODE BLOCK on the ARCHIVE page of your site (e.g.
+  amlawpolicy.com/mamdani-archive). It pulls the latest archive into the page
+  on every visit and refreshes every 10 minutes.
+
+  Pre-filled for GitHub user "gfilitti-ai" and repo "mamdani-dsa-tracker". If
+  you name the repo something else, change the URL on the next line to match.
+-->
+<div id="mdt-archive" style="text-align:center;font-family:Arial,Helvetica,sans-serif;color:#888;">Loading the archive&hellip;</div>
+<script>
+(function () {
+  var URL = "https://gfilitti-ai.github.io/mamdani-dsa-tracker/embed_archive.html"; // <-- repo name here
+  function load() {
+    fetch(URL + "?t=" + Date.now())
+      .then(function (r) { return r.text(); })
+      .then(function (html) { document.getElementById("mdt-archive").innerHTML = html; })
+      .catch(function () {
+        document.getElementById("mdt-archive").innerHTML =
+          "The archive is updating — please check back in a moment.";
+      });
+  }
+  load();
+  setInterval(load, 600000); // re-pull every 10 minutes
+})();
+</script>
