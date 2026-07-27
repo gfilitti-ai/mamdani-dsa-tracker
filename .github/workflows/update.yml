@@ -4,13 +4,14 @@ on:
   push:
     branches: [main]          # rebuild whenever you push new code
   schedule:
-    # Hourly PROBE at an off-peak minute. Top-of-hour crons ("0 * * *") sit in GitHub's
-    # most congested queue and get silently skipped under load; :37 is far quieter.
+    # Twice-hourly PROBE at off-peak minutes. Top-of-hour crons ("0 * * *") sit in
+    # GitHub's most congested queue and get silently skipped under load; :07/:37 are
+    # far quieter, and two chances per hour ride out GitHub's scheduler flaking on
+    # newer repos (observed 2026-07-27: the single :37 cron went silent for 13 hours).
     # A probe only triggers a real (Claude-calling) rebuild when the live page is stale
     # -- see the freshness guard in the "check" job -- so content still refreshes about
-    # every 4 hours and API cost stays flat. The point of probing hourly is that a
-    # skipped 4-hour slot is caught within ~1 hour instead of waiting the full 4-8.
-    - cron: "37 * * * *"
+    # every 4 hours and API cost stays flat; a fresh-page probe is a 9-second no-op.
+    - cron: "7,37 * * * *"
   workflow_dispatch: {}       # allow manual runs from the Actions tab
 
 # Least-privilege token; Pages deploy needs pages + id-token.
