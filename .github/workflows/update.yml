@@ -14,11 +14,13 @@ on:
     - cron: "7,37 * * * *"
   workflow_dispatch: {}       # allow manual runs from the Actions tab
 
-# Least-privilege token; Pages deploy needs pages + id-token.
+# Least-privilege token; Pages deploy needs pages + id-token; the keepalive step
+# below needs actions: write to re-enable this workflow.
 permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write
 
 # Serialize Pages work; do NOT cancel an in-progress build (a new probe must never
 # kill a real rebuild that is mid-flight).
@@ -34,6 +36,16 @@ jobs:
     outputs:
       stale: ${{ steps.guard.outputs.stale }}
     steps:
+      # GitHub silently disables a scheduled workflow after 60 days with no commits to
+      # the repo. Re-enabling the workflow through the API resets that 60-day clock,
+      # so do it on every scheduled probe. No commit needed.
+      - name: Keep the schedule alive
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X PUT "repos/${{ github.repository }}/actions/workflows/update.yml/enable" \
+          && echo "Inactivity clock reset." || echo "Keepalive call failed (non-fatal)."
       - id: guard
         env:
           MAX_AGE_SECONDS: "13800"   # 3h50m: a ~4h-old page rebuilds; a fresher one is skipped
